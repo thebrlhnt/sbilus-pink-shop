@@ -19,11 +19,11 @@ const ProductCard = ({ product }: ProductCardProps) => {
     : [];
 
   return (
-    <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-accent">
+        <div className="aspect-square bg-gray-50">
           <img
-            src={product.image || product.images?.[0] || '/placeholder.svg'}
+            src={product.image || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover"
           />
@@ -32,30 +32,30 @@ const ProductCard = ({ product }: ProductCardProps) => {
       
       <div className="p-3">
         <Link to={`/product/${product.id}`}>
-          <h3 className="font-medium text-sm line-clamp-2 mb-2 hover:text-primary transition-colors">
+          <h3 className="font-medium text-sm line-clamp-2 mb-2 text-gray-900 hover:text-pink-500 transition-colors">
             {product.name}
           </h3>
         </Link>
         
         <div className="flex items-center gap-2 mb-2">
           {product.originalPrice && (
-            <span className="text-xs text-muted-foreground line-through">
+            <span className="text-xs text-gray-500 line-through">
               R$ {product.originalPrice.toFixed(2)}
             </span>
           )}
-          <span className="font-semibold text-primary">
+          <span className="font-semibold text-pink-500">
             R$ {product.price.toFixed(2)}
           </span>
         </div>
 
         <div className="flex flex-wrap gap-1 mb-3">
           {availableSizes.slice(0, 3).map((size, index) => (
-            <Badge key={index} variant="outline" className="text-xs">
+            <Badge key={index} variant="outline" className="text-xs border-gray-300 text-gray-700">
               {size}
             </Badge>
           ))}
           {availableSizes.length > 3 && (
-            <Badge variant="outline" className="text-xs">
+            <Badge variant="outline" className="text-xs border-gray-300 text-gray-700">
               +{availableSizes.length - 3}
             </Badge>
           )}
@@ -63,7 +63,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
 
         <Button 
           size="sm" 
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground text-xs"
+          className="w-full bg-pink-500 hover:bg-pink-600 text-white text-xs"
         >
           Adicionar ao Carrinho
         </Button>

@@ -5,7 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
-/* White background with pink accents color scheme - NO YELLOW */
+/* White background with pink accents color scheme */
 
 @layer base {
   :root {
@@ -21,20 +21,20 @@
     --primary: 236 72 153; /* Pink-500 */
     --primary-foreground: 255 255 255; /* White text on pink */
 
-    --secondary: 252 231 243; /* Pink-100 */
-    --secondary-foreground: 157 23 77; /* Pink-800 */
+    --secondary: 249 250 251; /* Gray-50 */
+    --secondary-foreground: 75 85 99; /* Gray-600 */
 
-    --muted: 248 250 252; /* Slate-50 - light gray instead of any yellow tones */
-    --muted-foreground: 100 116 139; /* Slate-500 */
+    --muted: 249 250 251; /* Gray-50 */
+    --muted-foreground: 107 114 128; /* Gray-500 */
 
-    --accent: 252 231 243; /* Pink-100 - light pink instead of yellow */
-    --accent-foreground: 157 23 77; /* Pink-800 */
+    --accent: 249 250 251; /* Gray-50 */
+    --accent-foreground: 75 85 99; /* Gray-600 */
 
     --destructive: 239 68 68; /* Red-500 */
     --destructive-foreground: 255 255 255;
 
-    --border: 226 232 240; /* Slate-200 */
-    --input: 226 232 240;
+    --border: 229 231 235; /* Gray-200 */
+    --input: 229 231 235;
     --ring: 236 72 153; /* Pink-500 */
 
     --radius: 0.75rem;
@@ -43,9 +43,9 @@
     --sidebar-foreground: 30 30 30;
     --sidebar-primary: 236 72 153;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 252 231 243;
-    --sidebar-accent-foreground: 157 23 77;
-    --sidebar-border: 226 232 240;
+    --sidebar-accent: 249 250 251;
+    --sidebar-accent-foreground: 75 85 99;
+    --sidebar-border: 229 231 235;
     --sidebar-ring: 236 72 153;
   }
 
@@ -95,7 +95,7 @@
   }
 
   body {
-    @apply bg-background text-foreground font-sans;
+    @apply bg-white text-gray-900 font-sans;
   }
 }
 

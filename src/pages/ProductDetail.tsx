@@ -21,8 +21,8 @@ const ProductDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-50 bg-background border-b border-border px-4 py-3">
+      <div className="min-h-screen bg-white">
+        <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
           <div className="flex items-center gap-3 max-w-md mx-auto">
             <Button 
               variant="ghost" 
@@ -36,11 +36,11 @@ const ProductDetail = () => {
           </div>
         </header>
         <div className="max-w-md mx-auto">
-          <div className="aspect-square bg-muted animate-pulse" />
+          <div className="aspect-square bg-gray-100 animate-pulse" />
           <div className="p-4 space-y-4">
-            <div className="h-8 bg-muted animate-pulse rounded" />
-            <div className="h-6 bg-muted animate-pulse rounded w-1/2" />
-            <div className="h-20 bg-muted animate-pulse rounded" />
+            <div className="h-8 bg-gray-100 animate-pulse rounded" />
+            <div className="h-6 bg-gray-100 animate-pulse rounded w-1/2" />
+            <div className="h-20 bg-gray-100 animate-pulse rounded" />
           </div>
         </div>
       </div>
@@ -49,7 +49,7 @@ const ProductDetail = () => {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg mb-4">Produto não encontrado</p>
           <Link to="/products">
@@ -60,11 +60,9 @@ const ProductDetail = () => {
     );
   }
 
-  // Safely handle sizes - assume it's an object with size:quantity pairs
-  const availableSizes = product.sizes && typeof product.sizes === 'object' 
-    ? Object.entries(product.sizes as Record<string, number>)
-        .filter(([_, quantity]) => (quantity as number) > 0)
-        .map(([size, quantity]) => ({ size, quantity: quantity as number }))
+  // Handle sizes - show only sizes that exist for this product
+  const availableSizes = product.sizes && Array.isArray(product.sizes) 
+    ? product.sizes.filter(size => size && size.trim() !== '') // Filter out empty values
     : [];
 
   const handleAddToCart = () => {
@@ -85,9 +83,9 @@ const ProductDetail = () => {
   };
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background border-b border-border px-4 py-3">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center gap-3 max-w-md mx-auto">
           <Button 
             variant="ghost" 
@@ -97,8 +95,8 @@ const ProductDetail = () => {
           >
             <ArrowLeft size={20} />
           </Button>
-          <h1 className="text-lg font-semibold flex-1 line-clamp-1">{product.name}</h1>
-          <Link to="/cart" className="p-2 hover:bg-accent rounded-full transition-colors">
+          <h1 className="text-lg font-semibold flex-1 line-clamp-1 text-gray-900">{product.name}</h1>
+          <Link to="/cart" className="p-2 hover:bg-gray-50 rounded-full transition-colors">
             <ShoppingCart size={20} />
           </Link>
         </div>
@@ -107,9 +105,9 @@ const ProductDetail = () => {
       {/* Content */}
       <main className="max-w-md mx-auto">
         {/* Product Image */}
-        <div className="aspect-square bg-accent">
+        <div className="aspect-square bg-gray-50">
           <img
-            src={product.images?.[0] || '/placeholder.svg'}
+            src={product.images?.[0] || product.image || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover"
           />
@@ -118,14 +116,14 @@ const ProductDetail = () => {
         {/* Product Info */}
         <div className="p-4">
           <div className="mb-4">
-            <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
+            <h1 className="text-2xl font-bold mb-2 text-gray-900">{product.name}</h1>
             <div className="flex items-center gap-3">
               {product.promotional_price && (
-                <span className="text-lg text-muted-foreground line-through">
+                <span className="text-lg text-gray-500 line-through">
                   R$ {product.price.toFixed(2)}
                 </span>
               )}
-              <span className="text-2xl font-bold text-primary">
+              <span className="text-2xl font-bold text-pink-500">
                 R$ {(product.promotional_price || product.price).toFixed(2)}
               </span>
             </div>
@@ -133,44 +131,42 @@ const ProductDetail = () => {
 
           {/* Description */}
           <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-2">Descrição</h3>
-            <p className="text-muted-foreground leading-relaxed">
+            <h3 className="text-lg font-semibold mb-2 text-gray-900">Descrição</h3>
+            <p className="text-gray-600 leading-relaxed">
               {product.description || "Produto de alta qualidade da Tshirts Sbilus."}
             </p>
           </div>
 
-          {/* Size Selection */}
-          <div className="mb-6">
-            <h3 className="text-lg font-semibold mb-3">Tamanhos Disponíveis</h3>
-            <div className="grid grid-cols-5 gap-2">
-              {availableSizes.map(({ size, quantity }) => (
-                <button
-                  key={size}
-                  onClick={() => setSelectedSize(size)}
-                  className={`
-                    aspect-square border-2 rounded-lg flex items-center justify-center font-medium transition-colors
-                    ${selectedSize === size 
-                      ? 'border-primary bg-primary text-primary-foreground' 
-                      : 'border-border hover:border-primary'
-                    }
-                  `}
-                >
-                  {size}
-                </button>
-              ))}
+          {/* Size Selection - Only show if sizes are available */}
+          {availableSizes.length > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3 text-gray-900">Tamanhos Disponíveis</h3>
+              <div className="grid grid-cols-5 gap-2">
+                {availableSizes.map((size) => (
+                  <button
+                    key={size}
+                    onClick={() => setSelectedSize(size)}
+                    className={`
+                      aspect-square border-2 rounded-lg flex items-center justify-center font-medium transition-colors
+                      ${selectedSize === size 
+                        ? 'border-pink-500 bg-pink-500 text-white' 
+                        : 'border-gray-200 hover:border-pink-500 text-gray-700'
+                      }
+                    `}
+                  >
+                    {size}
+                  </button>
+                ))}
+              </div>
             </div>
-            {selectedSize && (
-              <p className="text-sm text-muted-foreground mt-2">
-                {availableSizes.find(s => s.size === selectedSize)?.quantity} unidades disponíveis
-              </p>
-            )}
-          </div>
+          )}
 
           {/* Add to Cart Button */}
           <Button 
             onClick={handleAddToCart}
-            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground py-6 text-lg"
+            className="w-full bg-pink-500 hover:bg-pink-600 text-white py-6 text-lg"
             size="lg"
+            disabled={availableSizes.length > 0 && !selectedSize}
           >
             Adicionar ao Carrinho
           </Button>

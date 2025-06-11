@@ -33,8 +33,8 @@ const CategoryCarousel = () => {
       <div className="flex gap-4 overflow-x-auto pb-2">
         {[1, 2, 3, 4].map((i) => (
           <div key={i} className="flex-shrink-0 text-center">
-            <div className="w-16 h-16 bg-muted rounded-full animate-pulse mb-2" />
-            <div className="w-12 h-4 bg-muted rounded animate-pulse mx-auto" />
+            <div className="w-16 h-16 bg-gray-100 rounded-full animate-pulse mb-2" />
+            <div className="w-12 h-4 bg-gray-100 rounded animate-pulse mx-auto" />
           </div>
         ))}
       </div>
@@ -51,10 +51,10 @@ const CategoryCarousel = () => {
             to={`/products?category=${category.name}`}
             className="flex-shrink-0 text-center"
           >
-            <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-2 hover:bg-primary hover:text-primary-foreground transition-colors">
-              <IconComponent size={24} className="text-primary hover:text-primary-foreground" />
+            <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-2 hover:bg-pink-500 hover:text-white transition-colors border border-gray-200">
+              <IconComponent size={24} className="text-pink-500 hover:text-white" />
             </div>
-            <p className="text-sm font-medium capitalize text-foreground">{category.name}</p>
+            <p className="text-sm font-medium capitalize text-gray-900">{category.name}</p>
           </Link>
         );
       })}
