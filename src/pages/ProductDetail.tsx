@@ -60,9 +60,12 @@ const ProductDetail = () => {
     );
   }
 
-  const availableSizes = Object.entries(product.sizes)
-    .filter(([_, quantity]) => quantity > 0)
-    .map(([size, quantity]) => ({ size, quantity }));
+  // Safely handle sizes - assume it's an object with size:quantity pairs
+  const availableSizes = product.sizes && typeof product.sizes === 'object' 
+    ? Object.entries(product.sizes as Record<string, number>)
+        .filter(([_, quantity]) => (quantity as number) > 0)
+        .map(([size, quantity]) => ({ size, quantity: quantity as number }))
+    : [];
 
   const handleAddToCart = () => {
     if (!selectedSize) {
@@ -106,7 +109,7 @@ const ProductDetail = () => {
         {/* Product Image */}
         <div className="aspect-square bg-accent">
           <img
-            src={product.image}
+            src={product.images?.[0] || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover"
           />
@@ -117,13 +120,13 @@ const ProductDetail = () => {
           <div className="mb-4">
             <h1 className="text-2xl font-bold mb-2">{product.name}</h1>
             <div className="flex items-center gap-3">
-              {product.originalPrice && (
+              {product.promotional_price && (
                 <span className="text-lg text-muted-foreground line-through">
-                  R$ {product.originalPrice.toFixed(2)}
+                  R$ {product.price.toFixed(2)}
                 </span>
               )}
               <span className="text-2xl font-bold text-primary">
-                R$ {product.price.toFixed(2)}
+                R$ {(product.promotional_price || product.price).toFixed(2)}
               </span>
             </div>
           </div>
@@ -132,7 +135,7 @@ const ProductDetail = () => {
           <div className="mb-6">
             <h3 className="text-lg font-semibold mb-2">Descrição</h3>
             <p className="text-muted-foreground leading-relaxed">
-              {product.description}
+              {product.description || "Produto de alta qualidade da Tshirts Sbilus."}
             </p>
           </div>
 

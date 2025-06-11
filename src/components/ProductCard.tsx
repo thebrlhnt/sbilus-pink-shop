@@ -9,16 +9,21 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
-  const availableSizes = Object.entries(product.sizes)
-    .filter(([_, quantity]) => quantity > 0)
-    .map(([size]) => size);
+  // Safely handle sizes - assume it's an object with size:quantity pairs or an array
+  const availableSizes = product.sizes && typeof product.sizes === 'object' 
+    ? Array.isArray(product.sizes)
+      ? product.sizes.filter(size => size) // If it's an array, filter out empty values
+      : Object.entries(product.sizes as Record<string, number>)
+          .filter(([_, quantity]) => (quantity as number) > 0)
+          .map(([size]) => size)
+    : [];
 
   return (
     <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/product/${product.id}`}>
         <div className="aspect-square bg-accent">
           <img
-            src={product.image}
+            src={product.image || product.images?.[0] || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover"
           />
@@ -44,11 +49,16 @@ const ProductCard = ({ product }: ProductCardProps) => {
         </div>
 
         <div className="flex flex-wrap gap-1 mb-3">
-          {availableSizes.map((size) => (
-            <Badge key={size} variant="outline" className="text-xs">
+          {availableSizes.slice(0, 3).map((size, index) => (
+            <Badge key={index} variant="outline" className="text-xs">
               {size}
             </Badge>
           ))}
+          {availableSizes.length > 3 && (
+            <Badge variant="outline" className="text-xs">
+              +{availableSizes.length - 3}
+            </Badge>
+          )}
         </div>
 
         <Button 

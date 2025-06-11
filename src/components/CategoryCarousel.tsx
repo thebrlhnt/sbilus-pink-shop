@@ -1,6 +1,7 @@
 
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { Shirt, Zap, Sparkles, ShoppingBag, Package } from "lucide-react";
 import { fetchCategories } from "@/services/supabaseService";
 
 const CategoryCarousel = () => {
@@ -9,21 +10,22 @@ const CategoryCarousel = () => {
     queryFn: fetchCategories,
   });
 
-  // Default icon mapping - you can customize this
+  // Unique icon mapping with Lucide React icons
   const getIconForCategory = (categoryName: string) => {
-    const iconMap: { [key: string]: string } = {
-      'tshirts': '👕',
-      'conjuntos': '👗',
-      'vestidos': '👚',
-      'cropped': '🎽',
-      'camisetas': '👕',
-      'blusas': '👚',
-      'calças': '👖',
-      'shorts': '🩳',
+    const iconMap: { [key: string]: React.ComponentType<any> } = {
+      'tshirts': Shirt,
+      'vestidos': Sparkles,
+      'conjuntos': Package,
+      'regatas': Zap,
+      'kits': ShoppingBag,
+      'camisetas': Shirt,
+      'blusas': Sparkles,
+      'calças': Package,
+      'shorts': Zap,
     };
     
     const normalizedName = categoryName.toLowerCase();
-    return iconMap[normalizedName] || '👕'; // Default to t-shirt icon
+    return iconMap[normalizedName] || Shirt; // Default to Shirt icon
   };
 
   if (isLoading) {
@@ -41,18 +43,21 @@ const CategoryCarousel = () => {
 
   return (
     <div className="flex gap-4 overflow-x-auto pb-2">
-      {categories.map((category) => (
-        <Link
-          key={category.id}
-          to={`/products?category=${category.name}`}
-          className="flex-shrink-0 text-center"
-        >
-          <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-2 hover:bg-primary hover:text-primary-foreground transition-colors">
-            <span className="text-2xl">{getIconForCategory(category.name)}</span>
-          </div>
-          <p className="text-sm font-medium capitalize">{category.name}</p>
-        </Link>
-      ))}
+      {categories.map((category) => {
+        const IconComponent = getIconForCategory(category.name);
+        return (
+          <Link
+            key={category.id}
+            to={`/products?category=${category.name}`}
+            className="flex-shrink-0 text-center"
+          >
+            <div className="w-16 h-16 bg-accent rounded-full flex items-center justify-center mb-2 hover:bg-primary hover:text-primary-foreground transition-colors">
+              <IconComponent size={24} className="text-primary hover:text-primary-foreground" />
+            </div>
+            <p className="text-sm font-medium capitalize text-foreground">{category.name}</p>
+          </Link>
+        );
+      })}
     </div>
   );
 };

@@ -5,7 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
-/* White background with pink accents color scheme */
+/* White background with pink accents color scheme - NO YELLOW */
 
 @layer base {
   :root {
@@ -24,10 +24,10 @@
     --secondary: 252 231 243; /* Pink-100 */
     --secondary-foreground: 157 23 77; /* Pink-800 */
 
-    --muted: 248 250 252; /* Slate-50 */
+    --muted: 248 250 252; /* Slate-50 - light gray instead of any yellow tones */
     --muted-foreground: 100 116 139; /* Slate-500 */
 
-    --accent: 252 231 243; /* Pink-100 */
+    --accent: 252 231 243; /* Pink-100 - light pink instead of yellow */
     --accent-foreground: 157 23 77; /* Pink-800 */
 
     --destructive: 239 68 68; /* Red-500 */
