@@ -2,19 +2,52 @@
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "@/hooks/use-toast";
-import { mockProducts } from "@/data/mockData";
+import { fetchProductById } from "@/services/supabaseService";
 
 const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState<string>("");
 
-  const product = mockProducts.find(p => p.id === id);
+  const { data: product, isLoading, error } = useQuery({
+    queryKey: ['product', id],
+    queryFn: () => id ? fetchProductById(id) : Promise.resolve(null),
+    enabled: !!id,
+  });
 
-  if (!product) {
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <header className="sticky top-0 z-50 bg-background border-b border-border px-4 py-3">
+          <div className="flex items-center gap-3 max-w-md mx-auto">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              onClick={() => navigate(-1)}
+              className="p-2"
+            >
+              <ArrowLeft size={20} />
+            </Button>
+            <h1 className="text-lg font-semibold flex-1">Carregando...</h1>
+          </div>
+        </header>
+        <div className="max-w-md mx-auto">
+          <div className="aspect-square bg-muted animate-pulse" />
+          <div className="p-4 space-y-4">
+            <div className="h-8 bg-muted animate-pulse rounded" />
+            <div className="h-6 bg-muted animate-pulse rounded w-1/2" />
+            <div className="h-20 bg-muted animate-pulse rounded" />
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error || !product) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">

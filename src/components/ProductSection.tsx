@@ -1,7 +1,8 @@
 
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import ProductCard from "./ProductCard";
-import { mockProducts } from "@/data/mockData";
+import { fetchProducts } from "@/services/supabaseService";
 
 interface ProductSectionProps {
   title: string;
@@ -9,8 +10,42 @@ interface ProductSectionProps {
 }
 
 const ProductSection = ({ title, type }: ProductSectionProps) => {
-  // Filter products based on type - for demo, showing first 4 products
-  const sectionProducts = mockProducts.slice(0, 4);
+  const { data: products = [], isLoading, error } = useQuery({
+    queryKey: ['products', type],
+    queryFn: fetchProducts,
+  });
+
+  const filteredProducts = products.filter(product => {
+    switch (type) {
+      case "lancamentos":
+        return product.featured;
+      case "promocoes":
+        return product.isPromotion;
+      case "novidades":
+        return product.isNew;
+      default:
+        return true;
+    }
+  }).slice(0, 4);
+
+  if (isLoading) {
+    return (
+      <section className="py-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold">{title}</h2>
+        </div>
+        <div className="grid grid-cols-2 gap-4">
+          {[1, 2, 3, 4].map((i) => (
+            <div key={i} className="bg-muted animate-pulse rounded-lg h-64" />
+          ))}
+        </div>
+      </section>
+    );
+  }
+
+  if (error) {
+    console.error('Error in ProductSection:', error);
+  }
 
   return (
     <section className="py-6">
@@ -24,10 +59,15 @@ const ProductSection = ({ title, type }: ProductSectionProps) => {
         </Link>
       </div>
       <div className="grid grid-cols-2 gap-4">
-        {sectionProducts.map((product) => (
+        {filteredProducts.map((product) => (
           <ProductCard key={product.id} product={product} />
         ))}
       </div>
+      {filteredProducts.length === 0 && !isLoading && (
+        <div className="text-center py-8 text-muted-foreground">
+          Nenhum produto encontrado para {title.toLowerCase()}
+        </div>
+      )}
     </section>
   );
 };

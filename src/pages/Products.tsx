@@ -2,53 +2,74 @@
 import { useState, useEffect } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { ArrowLeft, Filter } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import ProductCard from "@/components/ProductCard";
-import { mockProducts } from "@/data/mockData";
+import { fetchProducts, fetchCategories, fetchProductsByCategory } from "@/services/supabaseService";
 import { Product } from "@/types/product";
 
 const Products = () => {
   const [searchParams] = useSearchParams();
-  const [filteredProducts, setFilteredProducts] = useState<Product[]>(mockProducts);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
-  const categories = ["tshirts", "conjuntos", "vestidos", "cropped"];
+  const { data: allProducts = [], isLoading: productsLoading } = useQuery({
+    queryKey: ['products'],
+    queryFn: fetchProducts,
+  });
+
+  const { data: categories = [], isLoading: categoriesLoading } = useQuery({
+    queryKey: ['categories'],
+    queryFn: fetchCategories,
+  });
+
+  const { data: categoryProducts = [], isLoading: categoryLoading } = useQuery({
+    queryKey: ['products', 'category', selectedCategory],
+    queryFn: () => selectedCategory ? fetchProductsByCategory(selectedCategory) : Promise.resolve([]),
+    enabled: !!selectedCategory,
+  });
+
+  const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const category = searchParams.get("category");
     const section = searchParams.get("section");
 
-    let products = mockProducts;
-
     if (category) {
-      products = products.filter(p => p.category === category);
       setSelectedCategory(category);
-    } else if (section) {
-      switch (section) {
-        case "lancamentos":
-          products = products.filter(p => p.featured);
-          break;
-        case "promocoes":
-          products = products.filter(p => p.isPromotion);
-          break;
-        case "novidades":
-          products = products.filter(p => p.isNew);
-          break;
-      }
-    }
-
-    setFilteredProducts(products);
-  }, [searchParams]);
-
-  const handleCategoryFilter = (category: string | null) => {
-    setSelectedCategory(category);
-    if (category) {
-      setFilteredProducts(mockProducts.filter(p => p.category === category));
+      setFilteredProducts(categoryProducts);
     } else {
-      setFilteredProducts(mockProducts);
+      let products = allProducts;
+
+      if (section) {
+        switch (section) {
+          case "lancamentos":
+            products = products.filter(p => p.featured);
+            break;
+          case "promocoes":
+            products = products.filter(p => p.isPromotion);
+            break;
+          case "novidades":
+            products = products.filter(p => p.isNew);
+            break;
+        }
+      }
+
+      setFilteredProducts(products);
+      setSelectedCategory(null);
+    }
+  }, [searchParams, allProducts, categoryProducts]);
+
+  const handleCategoryFilter = (categoryName: string | null) => {
+    setSelectedCategory(categoryName);
+    if (categoryName) {
+      // The useQuery will handle fetching category products
+    } else {
+      setFilteredProducts(allProducts);
     }
   };
+
+  const isLoading = productsLoading || categoriesLoading || (selectedCategory && categoryLoading);
 
   return (
     <div className="min-h-screen bg-background">
@@ -80,25 +101,33 @@ const Products = () => {
             </Badge>
             {categories.map((category) => (
               <Badge
-                key={category}
-                variant={selectedCategory === category ? "default" : "outline"}
+                key={category.id}
+                variant={selectedCategory === category.name ? "default" : "outline"}
                 className="cursor-pointer whitespace-nowrap capitalize"
-                onClick={() => handleCategoryFilter(category)}
+                onClick={() => handleCategoryFilter(category.name)}
               >
-                {category}
+                {category.name}
               </Badge>
             ))}
           </div>
         </div>
 
         {/* Products Grid */}
-        <div className="grid grid-cols-2 gap-4">
-          {filteredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {isLoading ? (
+          <div className="grid grid-cols-2 gap-4">
+            {[1, 2, 3, 4, 5, 6].map((i) => (
+              <div key={i} className="bg-muted animate-pulse rounded-lg h-64" />
+            ))}
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 gap-4">
+            {filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        )}
 
-        {filteredProducts.length === 0 && (
+        {filteredProducts.length === 0 && !isLoading && (
           <div className="text-center py-12">
             <p className="text-muted-foreground">Nenhum produto encontrado</p>
           </div>

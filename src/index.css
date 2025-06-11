@@ -5,27 +5,27 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
-/* Pink color scheme for Tshirts Sbilus */
+/* White background with pink accents color scheme */
 
 @layer base {
   :root {
-    --background: 254 242 242; /* Rose-50 equivalent */
-    --foreground: 50 5 5; /* Rose-950 equivalent */
+    --background: 255 255 255; /* Pure white */
+    --foreground: 30 30 30; /* Dark gray for text */
 
     --card: 255 255 255; /* White */
-    --card-foreground: 50 5 5;
+    --card-foreground: 30 30 30;
 
     --popover: 255 255 255;
-    --popover-foreground: 50 5 5;
+    --popover-foreground: 30 30 30;
 
-    --primary: 219 39 119; /* Pink-600 */
-    --primary-foreground: 253 242 248; /* Pink-50 */
+    --primary: 236 72 153; /* Pink-500 */
+    --primary-foreground: 255 255 255; /* White text on pink */
 
-    --secondary: 253 242 248; /* Pink-50 */
-    --secondary-foreground: 219 39 119;
+    --secondary: 252 231 243; /* Pink-100 */
+    --secondary-foreground: 157 23 77; /* Pink-800 */
 
-    --muted: 249 230 235; /* Pink-100 */
-    --muted-foreground: 136 19 55; /* Pink-900 */
+    --muted: 248 250 252; /* Slate-50 */
+    --muted-foreground: 100 116 139; /* Slate-500 */
 
     --accent: 252 231 243; /* Pink-100 */
     --accent-foreground: 157 23 77; /* Pink-800 */
@@ -33,59 +33,59 @@
     --destructive: 239 68 68; /* Red-500 */
     --destructive-foreground: 255 255 255;
 
-    --border: 244 200 217; /* Pink-200 */
-    --input: 244 200 217;
-    --ring: 219 39 119; /* Pink-600 */
+    --border: 226 232 240; /* Slate-200 */
+    --input: 226 232 240;
+    --ring: 236 72 153; /* Pink-500 */
 
     --radius: 0.75rem;
 
     --sidebar-background: 255 255 255;
-    --sidebar-foreground: 50 5 5;
-    --sidebar-primary: 219 39 119;
-    --sidebar-primary-foreground: 253 242 248;
+    --sidebar-foreground: 30 30 30;
+    --sidebar-primary: 236 72 153;
+    --sidebar-primary-foreground: 255 255 255;
     --sidebar-accent: 252 231 243;
     --sidebar-accent-foreground: 157 23 77;
-    --sidebar-border: 244 200 217;
-    --sidebar-ring: 219 39 119;
+    --sidebar-border: 226 232 240;
+    --sidebar-ring: 236 72 153;
   }
 
   .dark {
-    --background: 20 14 23; /* Dark rose */
-    --foreground: 253 242 248;
+    --background: 15 23 42; /* Slate-900 */
+    --foreground: 248 250 252; /* Slate-50 */
 
-    --card: 30 20 25;
-    --card-foreground: 253 242 248;
+    --card: 30 41 59; /* Slate-800 */
+    --card-foreground: 248 250 252;
 
-    --popover: 30 20 25;
-    --popover-foreground: 253 242 248;
+    --popover: 30 41 59;
+    --popover-foreground: 248 250 252;
 
-    --primary: 236 72 153; /* Pink-500 */
-    --primary-foreground: 20 14 23;
+    --primary: 244 114 182; /* Pink-400 */
+    --primary-foreground: 15 23 42;
 
-    --secondary: 40 30 35;
-    --secondary-foreground: 253 242 248;
+    --secondary: 51 65 85; /* Slate-700 */
+    --secondary-foreground: 248 250 252;
 
-    --muted: 40 30 35;
-    --muted-foreground: 244 200 217;
+    --muted: 51 65 85;
+    --muted-foreground: 148 163 184; /* Slate-400 */
 
-    --accent: 40 30 35;
-    --accent-foreground: 253 242 248;
+    --accent: 51 65 85;
+    --accent-foreground: 248 250 252;
 
     --destructive: 239 68 68;
-    --destructive-foreground: 253 242 248;
+    --destructive-foreground: 248 250 252;
 
-    --border: 70 50 60;
-    --input: 70 50 60;
-    --ring: 236 72 153;
+    --border: 51 65 85;
+    --input: 51 65 85;
+    --ring: 244 114 182;
 
-    --sidebar-background: 30 20 25;
-    --sidebar-foreground: 253 242 248;
-    --sidebar-primary: 236 72 153;
-    --sidebar-primary-foreground: 20 14 23;
-    --sidebar-accent: 40 30 35;
-    --sidebar-accent-foreground: 253 242 248;
-    --sidebar-border: 70 50 60;
-    --sidebar-ring: 236 72 153;
+    --sidebar-background: 30 41 59;
+    --sidebar-foreground: 248 250 252;
+    --sidebar-primary: 244 114 182;
+    --sidebar-primary-foreground: 15 23 42;
+    --sidebar-accent: 51 65 85;
+    --sidebar-accent-foreground: 248 250 252;
+    --sidebar-border: 51 65 85;
+    --sidebar-ring: 244 114 182;
   }
 }
 
