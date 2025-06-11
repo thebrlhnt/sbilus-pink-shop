@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams, useNavigate } from "react-router-dom";
 import { ArrowLeft, Filter } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,8 @@ import { fetchProducts, fetchCategories, fetchProductsByCategory } from "@/servi
 import { Product } from "@/types/product";
 
 const Products = () => {
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
 
   const { data: allProducts = [], isLoading: productsLoading } = useQuery({
@@ -37,7 +38,6 @@ const Products = () => {
 
     if (category) {
       setSelectedCategory(category);
-      setFilteredProducts(categoryProducts);
     } else {
       let products = allProducts;
 
@@ -58,13 +58,22 @@ const Products = () => {
       setFilteredProducts(products);
       setSelectedCategory(null);
     }
-  }, [searchParams, allProducts, categoryProducts]);
+  }, [searchParams, allProducts]);
+
+  useEffect(() => {
+    if (selectedCategory && categoryProducts.length >= 0) {
+      setFilteredProducts(categoryProducts);
+    }
+  }, [selectedCategory, categoryProducts]);
 
   const handleCategoryFilter = (categoryName: string | null) => {
     setSelectedCategory(categoryName);
+    
+    // Update URL params
     if (categoryName) {
-      // The useQuery will handle fetching category products
+      setSearchParams({ category: categoryName });
     } else {
+      setSearchParams({});
       setFilteredProducts(allProducts);
     }
   };

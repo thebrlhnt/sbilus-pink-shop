@@ -10,7 +10,7 @@ const Index = () => {
   const [cartItemsCount, setCartItemsCount] = useState(0);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen">
       {/* Header */}
       <header className="sticky top-0 z-50 bg-background border-b border-border px-4 py-3">
         <div className="flex items-center justify-between max-w-md mx-auto">
@@ -55,7 +55,7 @@ const Index = () => {
         {/* Ver Tudo Button */}
         <div className="py-6">
           <Link to="/products">
-            <Button className="w-full bg-primary hover:bg-primary/90 text-primary-foreground">
+            <Button className="w-full">
               Ver Todos os Produtos
             </Button>
           </Link>
