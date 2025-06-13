@@ -70,20 +70,46 @@ export const fetchProductsByCategory = async (categoryName: string): Promise<Pro
   return (products || []).map(transformSupabaseProduct);
 };
 
+export const updateProductStock = async (
+  productId: string,
+  size: string,
+  quantity: number,
+  movementType: 'in' | 'out' | 'adjustment',
+  reason?: string
+): Promise<boolean> => {
+  const { data, error } = await supabase.rpc('update_product_stock', {
+    p_product_id: productId,
+    p_size: size,
+    p_quantity: quantity,
+    p_movement_type: movementType,
+    p_reason: reason
+  });
+
+  if (error) {
+    console.error('Error updating stock:', error);
+    throw error;
+  }
+
+  return data;
+};
+
 const transformSupabaseProduct = (supabaseProduct: SupabaseProduct): Product => {
-  // Create sizes object with default quantities
-  const sizesObj: Product['sizes'] = {};
-  if (supabaseProduct.sizes) {
-    supabaseProduct.sizes.forEach(size => {
-      sizesObj[size as keyof Product['sizes']] = 5; // Default quantity
+  // Handle stock data from the database
+  let sizesObj: Product['sizes'] = {};
+  
+  if (supabaseProduct.stock && typeof supabaseProduct.stock === 'object') {
+    // Use stock data from database
+    const stockData = supabaseProduct.stock as Record<string, number>;
+    Object.keys(stockData).forEach(size => {
+      sizesObj[size as keyof Product['sizes']] = stockData[size];
     });
   } else {
-    // Default sizes if none specified
-    sizesObj.U = 5;
-    sizesObj.P = 5;
-    sizesObj.M = 5;
-    sizesObj.G = 5;
-    sizesObj.GG = 5;
+    // Fallback to default sizes if no stock data
+    sizesObj.U = 0;
+    sizesObj.P = 0;
+    sizesObj.M = 0;
+    sizesObj.G = 0;
+    sizesObj.GG = 0;
   }
 
   return {

@@ -35,3 +35,15 @@ export interface Order {
   date: string;
   status: "pending" | "completed" | "cancelled";
 }
+
+export interface StockMovement {
+  id: string;
+  productId: string;
+  size: string;
+  movementType: 'in' | 'out' | 'adjustment';
+  quantity: number;
+  previousStock: number;
+  newStock: number;
+  reason?: string;
+  createdAt: string;
+}

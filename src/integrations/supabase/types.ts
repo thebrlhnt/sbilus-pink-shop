@@ -160,6 +160,7 @@ export type Database = {
           price: number
           promotional_price: number | null
           sizes: string[] | null
+          stock: Json | null
           updated_at: string
           weight: number | null
           width: number | null
@@ -177,6 +178,7 @@ export type Database = {
           price: number
           promotional_price?: number | null
           sizes?: string[] | null
+          stock?: Json | null
           updated_at?: string
           weight?: number | null
           width?: number | null
@@ -194,6 +196,7 @@ export type Database = {
           price?: number
           promotional_price?: number | null
           sizes?: string[] | null
+          stock?: Json | null
           updated_at?: string
           weight?: number | null
           width?: number | null
@@ -208,12 +211,65 @@ export type Database = {
           },
         ]
       }
+      stock_movements: {
+        Row: {
+          created_at: string | null
+          id: string
+          movement_type: string
+          new_stock: number
+          previous_stock: number
+          product_id: string | null
+          quantity: number
+          reason: string | null
+          size: string
+        }
+        Insert: {
+          created_at?: string | null
+          id?: string
+          movement_type: string
+          new_stock: number
+          previous_stock: number
+          product_id?: string | null
+          quantity: number
+          reason?: string | null
+          size: string
+        }
+        Update: {
+          created_at?: string | null
+          id?: string
+          movement_type?: string
+          new_stock?: number
+          previous_stock?: number
+          product_id?: string | null
+          quantity?: number
+          reason?: string | null
+          size?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "stock_movements_product_id_fkey"
+            columns: ["product_id"]
+            isOneToOne: false
+            referencedRelation: "products"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      update_product_stock: {
+        Args: {
+          p_product_id: string
+          p_size: string
+          p_quantity: number
+          p_movement_type: string
+          p_reason?: string
+        }
+        Returns: boolean
+      }
     }
     Enums: {
       [_ in never]: never

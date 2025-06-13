@@ -14,16 +14,27 @@ interface ProductCardProps {
 const ProductCard = ({ product }: ProductCardProps) => {
   const [quantity, setQuantity] = useState(1);
 
-  // Safely handle sizes - assume it's an object with size:quantity pairs or an array
+  // Get available sizes (sizes with stock > 0)
   const availableSizes = product.sizes && typeof product.sizes === 'object' 
-    ? Array.isArray(product.sizes)
-      ? product.sizes.filter(size => size) // If it's an array, filter out empty values
-      : Object.entries(product.sizes as Record<string, number>)
-          .filter(([_, quantity]) => (quantity as number) > 0)
-          .map(([size]) => size)
+    ? Object.entries(product.sizes as Record<string, number>)
+        .filter(([_, stock]) => (stock as number) > 0)
+        .map(([size]) => size)
     : [];
 
+  // Check if product has any stock
+  const hasStock = availableSizes.length > 0;
+  const totalStock = Object.values(product.sizes || {}).reduce((sum, stock) => sum + (stock || 0), 0);
+
   const handleAddToCart = () => {
+    if (!hasStock) {
+      toast({
+        title: "Produto indisponível",
+        description: "Este produto está fora de estoque.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Produto adicionado!",
       description: `${quantity}x ${product.name} adicionado ao carrinho.`,
@@ -41,12 +52,17 @@ const ProductCard = ({ product }: ProductCardProps) => {
   return (
     <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-muted">
+        <div className="aspect-square bg-muted relative">
           <img
             src={product.image || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover"
           />
+          {!hasStock && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <span className="text-white font-semibold text-sm">Fora de Estoque</span>
+            </div>
+          )}
         </div>
       </Link>
       
@@ -68,10 +84,10 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-1 mb-3">
+        <div className="flex flex-wrap gap-1 mb-2">
           {availableSizes.slice(0, 3).map((size, index) => (
             <Badge key={index} variant="outline" className="text-xs">
-              {size}
+              {size} ({product.sizes?.[size as keyof typeof product.sizes]})
             </Badge>
           ))}
           {availableSizes.length > 3 && (
@@ -81,36 +97,47 @@ const ProductCard = ({ product }: ProductCardProps) => {
           )}
         </div>
 
-        {/* Quantity Selector */}
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-xs text-muted-foreground">Quantidade:</span>
-          <div className="flex items-center gap-2">
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={decrementQuantity}
-            >
-              <Minus size={12} />
-            </Button>
-            <span className="text-sm font-medium w-6 text-center">{quantity}</span>
-            <Button 
-              variant="outline" 
-              size="sm"
-              className="h-6 w-6 p-0"
-              onClick={incrementQuantity}
-            >
-              <Plus size={12} />
-            </Button>
-          </div>
+        {/* Stock indicator */}
+        <div className="mb-2">
+          <span className="text-xs text-muted-foreground">
+            Estoque total: {totalStock} unidades
+          </span>
         </div>
+
+        {/* Quantity Selector - only show if has stock */}
+        {hasStock && (
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs text-muted-foreground">Quantidade:</span>
+            <div className="flex items-center gap-2">
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={decrementQuantity}
+              >
+                <Minus size={12} />
+              </Button>
+              <span className="text-sm font-medium w-6 text-center">{quantity}</span>
+              <Button 
+                variant="outline" 
+                size="sm"
+                className="h-6 w-6 p-0"
+                onClick={incrementQuantity}
+              >
+                <Plus size={12} />
+              </Button>
+            </div>
+          </div>
+        )}
 
         <Button 
           size="sm" 
           className="w-full text-xs"
           onClick={handleAddToCart}
+          disabled={!hasStock}
+          variant={hasStock ? "default" : "secondary"}
         >
-          Adicionar ao Carrinho
+          {hasStock ? "Adicionar ao Carrinho" : "Fora de Estoque"}
         </Button>
       </div>
     </div>

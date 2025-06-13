@@ -9,6 +9,7 @@ export interface SupabaseProduct {
   sizes?: string[];
   category_id?: string;
   is_new?: boolean;
+  stock?: Record<string, number> | null;
   created_at: string;
   updated_at: string;
   weight?: number;

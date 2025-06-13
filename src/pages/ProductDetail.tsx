@@ -60,16 +60,39 @@ const ProductDetail = () => {
     );
   }
 
-  // Handle sizes - get available sizes from the product
-  const availableSizes = product.sizes && Array.isArray(product.sizes) 
-    ? product.sizes.filter(size => size && size.trim() !== '') 
-    : Object.keys(product.sizes || {}).filter(size => (product.sizes as any)[size] > 0);
+  // Get available sizes with stock > 0
+  const availableSizes = product.sizes && typeof product.sizes === 'object'
+    ? Object.entries(product.sizes as Record<string, number>)
+        .filter(([_, stock]) => (stock as number) > 0)
+        .map(([size]) => size)
+    : [];
+
+  const hasStock = availableSizes.length > 0;
+  const selectedSizeStock = selectedSize ? product.sizes?.[selectedSize as keyof typeof product.sizes] || 0 : 0;
 
   const handleAddToCart = () => {
+    if (!hasStock) {
+      toast({
+        title: "Produto indisponível",
+        description: "Este produto está fora de estoque.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     if (availableSizes.length > 0 && !selectedSize) {
       toast({
         title: "Selecione um tamanho",
         description: "Por favor, selecione um tamanho antes de adicionar ao carrinho.",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    if (selectedSizeStock === 0) {
+      toast({
+        title: "Tamanho indisponível",
+        description: "Este tamanho está fora de estoque.",
         variant: "destructive",
       });
       return;
@@ -105,12 +128,17 @@ const ProductDetail = () => {
       {/* Content */}
       <main className="max-w-md mx-auto">
         {/* Product Image */}
-        <div className="aspect-square bg-muted">
+        <div className="aspect-square bg-muted relative">
           <img
             src={product.images?.[0] || product.image || '/placeholder.svg'}
             alt={product.name}
             className="w-full h-full object-cover"
           />
+          {!hasStock && (
+            <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center">
+              <span className="text-white font-semibold text-lg">Fora de Estoque</span>
+            </div>
+          )}
         </div>
 
         {/* Product Info */}
@@ -142,22 +170,49 @@ const ProductDetail = () => {
             <div className="mb-6">
               <h3 className="text-lg font-semibold mb-3">Tamanhos Disponíveis</h3>
               <div className="grid grid-cols-5 gap-2">
-                {availableSizes.map((size) => (
-                  <button
-                    key={size}
-                    onClick={() => setSelectedSize(size)}
-                    className={`
-                      aspect-square border-2 rounded-lg flex items-center justify-center font-medium transition-colors
-                      ${selectedSize === size 
-                        ? 'border-primary bg-primary text-primary-foreground' 
-                        : 'border-border hover:border-primary'
-                      }
-                    `}
-                  >
-                    {size}
-                  </button>
-                ))}
+                {Object.keys(product.sizes || {}).map((size) => {
+                  const stock = product.sizes?.[size as keyof typeof product.sizes] || 0;
+                  const isAvailable = stock > 0;
+                  const isSelected = selectedSize === size;
+                  
+                  return (
+                    <button
+                      key={size}
+                      onClick={() => isAvailable ? setSelectedSize(size) : null}
+                      disabled={!isAvailable}
+                      className={`
+                        aspect-square border-2 rounded-lg flex items-center justify-center font-medium transition-colors relative
+                        ${isSelected && isAvailable
+                          ? 'border-primary bg-primary text-primary-foreground' 
+                          : isAvailable
+                          ? 'border-border hover:border-primary'
+                          : 'border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                        }
+                      `}
+                    >
+                      <span className="text-sm">{size}</span>
+                      <span className="absolute -bottom-5 text-xs text-muted-foreground">
+                        {stock}
+                      </span>
+                    </button>
+                  );
+                })}
               </div>
+              {selectedSize && (
+                <p className="text-sm text-muted-foreground mt-4">
+                  Estoque do tamanho {selectedSize}: {selectedSizeStock} unidades
+                </p>
+              )}
+            </div>
+          )}
+
+          {/* Stock status */}
+          {!hasStock && (
+            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
+              <h3 className="font-semibold text-destructive mb-2">Produto Indisponível</h3>
+              <p className="text-sm text-muted-foreground">
+                Este produto está temporariamente fora de estoque. Entre em contato conosco para verificar a previsão de reposição.
+              </p>
             </div>
           )}
 
@@ -166,9 +221,17 @@ const ProductDetail = () => {
             onClick={handleAddToCart}
             className="w-full py-6 text-lg"
             size="lg"
-            disabled={availableSizes.length > 0 && !selectedSize}
+            disabled={!hasStock || (availableSizes.length > 0 && !selectedSize) || selectedSizeStock === 0}
+            variant={hasStock ? "default" : "secondary"}
           >
-            Adicionar ao Carrinho
+            {!hasStock 
+              ? "Fora de Estoque" 
+              : availableSizes.length > 0 && !selectedSize
+              ? "Selecione um Tamanho"
+              : selectedSizeStock === 0
+              ? "Tamanho Indisponível"
+              : "Adicionar ao Carrinho"
+            }
           </Button>
         </div>
       </main>
