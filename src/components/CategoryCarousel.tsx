@@ -52,9 +52,9 @@ const CategoryCarousel = () => {
             className="flex-shrink-0 text-center"
           >
             <div className="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mb-2 hover:bg-pink-500 hover:text-white transition-colors border border-gray-200">
-              <IconComponent size={24} className="text-pink-500 hover:text-white" />
+              <IconComponent size={24} className="text-gray-600 group-hover:text-white" />
             </div>
-            <p className="text-sm font-medium capitalize text-gray-900">{category.name}</p>
+            <p className="text-sm font-medium capitalize text-gray-700">{category.name}</p>
           </Link>
         );
       })}

@@ -12,7 +12,7 @@ const Index = () => {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-white border-b border-border px-4 py-3">
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 px-4 py-3">
         <div className="flex items-center justify-between max-w-md mx-auto">
           <h1 className="text-2xl font-bold text-primary">Tshirts Sbilus</h1>
           <div className="flex items-center gap-3">
@@ -20,11 +20,11 @@ const Index = () => {
               href="https://wa.me/5585988439111" 
               target="_blank" 
               rel="noopener noreferrer"
-              className="p-2 text-primary hover:bg-gray-50 rounded-full transition-colors"
+              className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors"
             >
               <MessageCircle size={24} />
             </a>
-            <Link to="/cart" className="relative p-2 text-primary hover:bg-gray-50 rounded-full transition-colors">
+            <Link to="/cart" className="relative p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
               <ShoppingCart size={24} />
               {cartItemsCount > 0 && (
                 <span className="absolute -top-1 -right-1 bg-primary text-primary-foreground text-xs rounded-full h-6 w-6 flex items-center justify-center">
@@ -32,7 +32,7 @@ const Index = () => {
                 </span>
               )}
             </Link>
-            <Link to="/profile" className="p-2 text-primary hover:bg-gray-50 rounded-full transition-colors">
+            <Link to="/profile" className="p-2 text-gray-600 hover:bg-gray-50 rounded-full transition-colors">
               <User size={24} />
             </Link>
           </div>
@@ -43,7 +43,7 @@ const Index = () => {
       <main className="max-w-md mx-auto px-4 pb-20">
         {/* Categories */}
         <section className="py-6">
-          <h2 className="text-xl font-semibold mb-4">Categorias</h2>
+          <h2 className="text-xl font-semibold mb-4 text-gray-700">Categorias</h2>
           <CategoryCarousel />
         </section>
 

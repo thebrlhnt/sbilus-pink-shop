@@ -30,7 +30,7 @@ const ProductSection = ({ title, type }: ProductSectionProps) => {
     return (
       <section className="py-6">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-xl font-semibold">{title}</h2>
+          <h2 className="text-xl font-semibold text-gray-700">{title}</h2>
         </div>
         <div className="grid grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
@@ -48,7 +48,7 @@ const ProductSection = ({ title, type }: ProductSectionProps) => {
   return (
     <section className="py-6">
       <div className="flex items-center justify-between mb-4">
-        <h2 className="text-xl font-semibold">{title}</h2>
+        <h2 className="text-xl font-semibold text-gray-700">{title}</h2>
         <Link 
           to={`/products?section=${type}`}
           className="text-primary text-sm hover:underline"
@@ -62,7 +62,7 @@ const ProductSection = ({ title, type }: ProductSectionProps) => {
         ))}
       </div>
       {filteredProducts.length === 0 && !isLoading && (
-        <div className="text-center py-8 text-muted-foreground">
+        <div className="text-center py-8 text-gray-500">
           Nenhum produto encontrado para {title.toLowerCase()}
         </div>
       )}

@@ -67,7 +67,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <div className="bg-white rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-gray-200 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/product/${product.id}`}>
         <div className="aspect-square bg-gray-50 relative">
           <img
@@ -85,14 +85,14 @@ const ProductCard = ({ product }: ProductCardProps) => {
       
       <div className="p-3">
         <Link to={`/product/${product.id}`}>
-          <h3 className="font-medium text-sm line-clamp-2 mb-2 hover:text-primary transition-colors">
+          <h3 className="font-medium text-sm line-clamp-2 mb-2 hover:text-primary transition-colors text-gray-700">
             {product.name}
           </h3>
         </Link>
         
         <div className="flex items-center gap-2 mb-2">
           {product.originalPrice && (
-            <span className="text-xs text-muted-foreground line-through">
+            <span className="text-xs text-gray-500 line-through">
               R$ {product.originalPrice.toFixed(2)}
             </span>
           )}
@@ -116,7 +116,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                     px-2 py-1 text-xs border rounded transition-colors
                     ${selectedSize === size
                       ? 'border-primary bg-primary text-white' 
-                      : 'border-gray-200 hover:border-primary'
+                      : 'border-gray-200 hover:border-primary text-gray-600'
                     }
                   `}
                 >
@@ -130,7 +130,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Quantity Selector - only show if size is selected */}
         {selectedSize && (
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs text-muted-foreground">Quantidade:</span>
+            <span className="text-xs text-gray-500">Quantidade:</span>
             <div className="flex items-center gap-2">
               <Button 
                 variant="outline" 
@@ -140,7 +140,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
               >
                 <Minus size={12} />
               </Button>
-              <span className="text-sm font-medium w-6 text-center">{quantity}</span>
+              <span className="text-sm font-medium w-6 text-center text-gray-700">{quantity}</span>
               <Button 
                 variant="outline" 
                 size="sm"
@@ -157,7 +157,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
         {/* Stock info for selected size */}
         {selectedSize && (
           <div className="mb-2">
-            <span className="text-xs text-muted-foreground">
+            <span className="text-xs text-gray-500">
               Estoque {selectedSize}: {selectedSizeStock} unidades
             </span>
           </div>
