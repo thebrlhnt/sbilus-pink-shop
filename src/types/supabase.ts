@@ -9,7 +9,7 @@ export interface SupabaseProduct {
   sizes?: string[];
   category_id?: string;
   is_new?: boolean;
-  stock?: Record<string, number> | null;
+  stock?: any; // Changed from Record<string, number> to any to handle Json type
   created_at: string;
   updated_at: string;
   weight?: number;

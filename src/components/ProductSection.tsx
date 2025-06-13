@@ -6,7 +6,7 @@ import { fetchProducts } from "@/services/supabaseService";
 
 interface ProductSectionProps {
   title: string;
-  type: "lancamentos" | "promocoes" | "novidades";
+  type: "lancamentos" | "promocoes";
 }
 
 const ProductSection = ({ title, type }: ProductSectionProps) => {
@@ -18,11 +18,9 @@ const ProductSection = ({ title, type }: ProductSectionProps) => {
   const filteredProducts = products.filter(product => {
     switch (type) {
       case "lancamentos":
-        return product.featured;
+        return product.featured || product.isNew; // Include both featured and new products
       case "promocoes":
         return product.isPromotion;
-      case "novidades":
-        return product.isNew;
       default:
         return true;
     }
@@ -36,7 +34,7 @@ const ProductSection = ({ title, type }: ProductSectionProps) => {
         </div>
         <div className="grid grid-cols-2 gap-4">
           {[1, 2, 3, 4].map((i) => (
-            <div key={i} className="bg-muted animate-pulse rounded-lg h-64" />
+            <div key={i} className="bg-white animate-pulse rounded-lg h-64 border border-gray-200" />
           ))}
         </div>
       </section>

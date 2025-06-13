@@ -1,7 +1,7 @@
 
 import { useState } from "react";
 import { Link, useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, ShoppingCart } from "lucide-react";
+import { ArrowLeft, ShoppingCart, Minus, Plus } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const [selectedSize, setSelectedSize] = useState<string>("");
+  const [quantity, setQuantity] = useState(1);
 
   const { data: product, isLoading, error } = useQuery({
     queryKey: ['product', id],
@@ -21,8 +22,8 @@ const ProductDetail = () => {
 
   if (isLoading) {
     return (
-      <div className="min-h-screen bg-background">
-        <header className="sticky top-0 z-50 bg-background border-b border-border px-4 py-3">
+      <div className="min-h-screen bg-white">
+        <header className="sticky top-0 z-50 bg-white border-b border-border px-4 py-3">
           <div className="flex items-center gap-3 max-w-md mx-auto">
             <Button 
               variant="ghost" 
@@ -36,11 +37,11 @@ const ProductDetail = () => {
           </div>
         </header>
         <div className="max-w-md mx-auto">
-          <div className="aspect-square bg-muted animate-pulse" />
+          <div className="aspect-square bg-gray-50 animate-pulse" />
           <div className="p-4 space-y-4">
-            <div className="h-8 bg-muted animate-pulse rounded" />
-            <div className="h-6 bg-muted animate-pulse rounded w-1/2" />
-            <div className="h-20 bg-muted animate-pulse rounded" />
+            <div className="h-8 bg-gray-50 animate-pulse rounded" />
+            <div className="h-6 bg-gray-50 animate-pulse rounded w-1/2" />
+            <div className="h-20 bg-gray-50 animate-pulse rounded" />
           </div>
         </div>
       </div>
@@ -49,7 +50,7 @@ const ProductDetail = () => {
 
   if (error || !product) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-lg mb-4">Produto não encontrado</p>
           <Link to="/products">
@@ -101,14 +102,24 @@ const ProductDetail = () => {
     // Add to cart logic would go here
     toast({
       title: "Produto adicionado!",
-      description: `${product.name}${selectedSize ? ` (${selectedSize})` : ''} foi adicionado ao carrinho.`,
+      description: `${quantity}x ${product.name}${selectedSize ? ` (${selectedSize})` : ''} foi adicionado ao carrinho.`,
     });
   };
 
+  const incrementQuantity = () => {
+    if (quantity < selectedSizeStock) {
+      setQuantity(prev => prev + 1);
+    }
+  };
+
+  const decrementQuantity = () => {
+    setQuantity(prev => prev > 1 ? prev - 1 : 1);
+  };
+
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background border-b border-border px-4 py-3">
+      <header className="sticky top-0 z-50 bg-white border-b border-border px-4 py-3">
         <div className="flex items-center gap-3 max-w-md mx-auto">
           <Button 
             variant="ghost" 
@@ -119,7 +130,7 @@ const ProductDetail = () => {
             <ArrowLeft size={20} />
           </Button>
           <h1 className="text-lg font-semibold flex-1 line-clamp-1">{product.name}</h1>
-          <Link to="/cart" className="p-2 hover:bg-accent rounded-full transition-colors">
+          <Link to="/cart" className="p-2 hover:bg-gray-50 rounded-full transition-colors">
             <ShoppingCart size={20} />
           </Link>
         </div>
@@ -128,7 +139,7 @@ const ProductDetail = () => {
       {/* Content */}
       <main className="max-w-md mx-auto">
         {/* Product Image */}
-        <div className="aspect-square bg-muted relative">
+        <div className="aspect-square bg-gray-50 relative">
           <img
             src={product.images?.[0] || product.image || '/placeholder.svg'}
             alt={product.name}
@@ -178,7 +189,12 @@ const ProductDetail = () => {
                   return (
                     <button
                       key={size}
-                      onClick={() => isAvailable ? setSelectedSize(size) : null}
+                      onClick={() => {
+                        if (isAvailable) {
+                          setSelectedSize(size);
+                          setQuantity(1);
+                        }
+                      }}
                       disabled={!isAvailable}
                       className={`
                         aspect-square border-2 rounded-lg flex items-center justify-center font-medium transition-colors relative
@@ -186,7 +202,7 @@ const ProductDetail = () => {
                           ? 'border-primary bg-primary text-primary-foreground' 
                           : isAvailable
                           ? 'border-border hover:border-primary'
-                          : 'border-border bg-muted text-muted-foreground cursor-not-allowed opacity-50'
+                          : 'border-border bg-gray-50 text-muted-foreground cursor-not-allowed opacity-50'
                         }
                       `}
                     >
@@ -206,10 +222,36 @@ const ProductDetail = () => {
             </div>
           )}
 
+          {/* Quantity Selection - Only show if size is selected */}
+          {selectedSize && selectedSizeStock > 0 && (
+            <div className="mb-6">
+              <h3 className="text-lg font-semibold mb-3">Quantidade</h3>
+              <div className="flex items-center gap-4">
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={decrementQuantity}
+                  disabled={quantity <= 1}
+                >
+                  <Minus size={16} />
+                </Button>
+                <span className="text-xl font-medium min-w-[3rem] text-center">{quantity}</span>
+                <Button 
+                  variant="outline" 
+                  size="sm"
+                  onClick={incrementQuantity}
+                  disabled={quantity >= selectedSizeStock}
+                >
+                  <Plus size={16} />
+                </Button>
+              </div>
+            </div>
+          )}
+
           {/* Stock status */}
           {!hasStock && (
-            <div className="mb-6 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <h3 className="font-semibold text-destructive mb-2">Produto Indisponível</h3>
+            <div className="mb-6 p-4 bg-red-50 border border-red-200 rounded-lg">
+              <h3 className="font-semibold text-red-600 mb-2">Produto Indisponível</h3>
               <p className="text-sm text-muted-foreground">
                 Este produto está temporariamente fora de estoque. Entre em contato conosco para verificar a previsão de reposição.
               </p>

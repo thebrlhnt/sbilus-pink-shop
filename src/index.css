@@ -5,7 +5,7 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;500;600;700&family=Montserrat:wght@400;500;600;700&display=swap');
 
-/* White background with pink accents color scheme */
+/* Minimal color scheme with pink accents */
 
 @layer base {
   :root {
@@ -21,13 +21,13 @@
     --primary: 236 72 153; /* Pink-500 */
     --primary-foreground: 255 255 255; /* White text on pink */
 
-    --secondary: 249 250 251; /* Gray-50 */
+    --secondary: 255 255 255; /* White instead of gray */
     --secondary-foreground: 75 85 99; /* Gray-600 */
 
-    --muted: 249 250 251; /* Gray-50 */
+    --muted: 255 255 255; /* White instead of gray */
     --muted-foreground: 107 114 128; /* Gray-500 */
 
-    --accent: 249 250 251; /* Gray-50 */
+    --accent: 255 255 255; /* White instead of gray */
     --accent-foreground: 75 85 99; /* Gray-600 */
 
     --destructive: 239 68 68; /* Red-500 */
@@ -43,7 +43,7 @@
     --sidebar-foreground: 30 30 30;
     --sidebar-primary: 236 72 153;
     --sidebar-primary-foreground: 255 255 255;
-    --sidebar-accent: 249 250 251;
+    --sidebar-accent: 255 255 255;
     --sidebar-accent-foreground: 75 85 99;
     --sidebar-border: 229 231 235;
     --sidebar-ring: 236 72 153;
@@ -95,7 +95,8 @@
   }
 
   body {
-    @apply bg-white text-gray-900 font-sans;
+    @apply text-gray-900 font-sans;
+    background: white;
   }
 }
 

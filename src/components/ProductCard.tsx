@@ -12,6 +12,7 @@ interface ProductCardProps {
 }
 
 const ProductCard = ({ product }: ProductCardProps) => {
+  const [selectedSize, setSelectedSize] = useState<string>("");
   const [quantity, setQuantity] = useState(1);
 
   // Get available sizes (sizes with stock > 0)
@@ -24,6 +25,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
   // Check if product has any stock
   const hasStock = availableSizes.length > 0;
   const totalStock = Object.values(product.sizes || {}).reduce((sum, stock) => sum + (stock || 0), 0);
+  const selectedSizeStock = selectedSize ? product.sizes?.[selectedSize as keyof typeof product.sizes] || 0 : 0;
 
   const handleAddToCart = () => {
     if (!hasStock) {
@@ -35,14 +37,29 @@ const ProductCard = ({ product }: ProductCardProps) => {
       return;
     }
 
+    if (!selectedSize) {
+      toast({
+        title: "Selecione um tamanho",
+        description: "Por favor, selecione um tamanho antes de adicionar ao carrinho.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     toast({
       title: "Produto adicionado!",
-      description: `${quantity}x ${product.name} adicionado ao carrinho.`,
+      description: `${quantity}x ${product.name} (${selectedSize}) adicionado ao carrinho.`,
     });
+
+    // Reset selection after adding to cart
+    setSelectedSize("");
+    setQuantity(1);
   };
 
   const incrementQuantity = () => {
-    setQuantity(prev => prev + 1);
+    if (quantity < selectedSizeStock) {
+      setQuantity(prev => prev + 1);
+    }
   };
 
   const decrementQuantity = () => {
@@ -50,9 +67,9 @@ const ProductCard = ({ product }: ProductCardProps) => {
   };
 
   return (
-    <div className="bg-card rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+    <div className="bg-white rounded-lg border border-border overflow-hidden shadow-sm hover:shadow-md transition-shadow">
       <Link to={`/product/${product.id}`}>
-        <div className="aspect-square bg-muted relative">
+        <div className="aspect-square bg-gray-50 relative">
           <img
             src={product.image || '/placeholder.svg'}
             alt={product.name}
@@ -84,28 +101,34 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </span>
         </div>
 
-        <div className="flex flex-wrap gap-1 mb-2">
-          {availableSizes.slice(0, 3).map((size, index) => (
-            <Badge key={index} variant="outline" className="text-xs">
-              {size} ({product.sizes?.[size as keyof typeof product.sizes]})
-            </Badge>
-          ))}
-          {availableSizes.length > 3 && (
-            <Badge variant="outline" className="text-xs">
-              +{availableSizes.length - 3}
-            </Badge>
-          )}
-        </div>
-
-        {/* Stock indicator */}
-        <div className="mb-2">
-          <span className="text-xs text-muted-foreground">
-            Estoque total: {totalStock} unidades
-          </span>
-        </div>
-
-        {/* Quantity Selector - only show if has stock */}
+        {/* Size Selection */}
         {hasStock && (
+          <div className="mb-2">
+            <div className="flex flex-wrap gap-1">
+              {availableSizes.map((size) => (
+                <button
+                  key={size}
+                  onClick={() => {
+                    setSelectedSize(size);
+                    setQuantity(1);
+                  }}
+                  className={`
+                    px-2 py-1 text-xs border rounded transition-colors
+                    ${selectedSize === size
+                      ? 'border-primary bg-primary text-white' 
+                      : 'border-gray-200 hover:border-primary'
+                    }
+                  `}
+                >
+                  {size}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* Quantity Selector - only show if size is selected */}
+        {selectedSize && (
           <div className="flex items-center justify-between mb-3">
             <span className="text-xs text-muted-foreground">Quantidade:</span>
             <div className="flex items-center gap-2">
@@ -123,6 +146,7 @@ const ProductCard = ({ product }: ProductCardProps) => {
                 size="sm"
                 className="h-6 w-6 p-0"
                 onClick={incrementQuantity}
+                disabled={quantity >= selectedSizeStock}
               >
                 <Plus size={12} />
               </Button>
@@ -130,14 +154,28 @@ const ProductCard = ({ product }: ProductCardProps) => {
           </div>
         )}
 
+        {/* Stock info for selected size */}
+        {selectedSize && (
+          <div className="mb-2">
+            <span className="text-xs text-muted-foreground">
+              Estoque {selectedSize}: {selectedSizeStock} unidades
+            </span>
+          </div>
+        )}
+
         <Button 
           size="sm" 
           className="w-full text-xs"
           onClick={handleAddToCart}
-          disabled={!hasStock}
+          disabled={!hasStock || !selectedSize}
           variant={hasStock ? "default" : "secondary"}
         >
-          {hasStock ? "Adicionar ao Carrinho" : "Fora de Estoque"}
+          {!hasStock 
+            ? "Fora de Estoque" 
+            : !selectedSize 
+            ? "Selecione um Tamanho"
+            : "Adicionar ao Carrinho"
+          }
         </Button>
       </div>
     </div>
