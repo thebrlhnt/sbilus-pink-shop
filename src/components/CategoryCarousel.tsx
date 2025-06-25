@@ -1,7 +1,6 @@
-
 import { Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Shirt, Package, TankTop, Sparkles } from "lucide-react";
+import { Shirt, Package, ShirtIcon, Sparkles } from "lucide-react";
 import { fetchCategories } from "@/services/supabaseService";
 
 const CategoryCarousel = () => {
@@ -10,7 +9,7 @@ const CategoryCarousel = () => {
     queryFn: fetchCategories,
   });
 
-  // Updated icon mapping based on your uploaded icons
+  // Updated icon mapping using only valid lucide-react icons
   const getIconForCategory = (categoryName: string) => {
     const iconMap: { [key: string]: React.ComponentType<any> } = {
       // T-shirts and similar
@@ -18,10 +17,10 @@ const CategoryCarousel = () => {
       'camisetas': Shirt,
       'blusas': Shirt,
       
-      // Tank tops and sleeveless
-      'regatas': TankTop,
-      'croppeds': TankTop,
-      'tank-tops': TankTop,
+      // Tank tops and sleeveless - using ShirtIcon as alternative
+      'regatas': ShirtIcon,
+      'croppeds': ShirtIcon,
+      'tank-tops': ShirtIcon,
       
       // Dresses and feminine items
       'vestidos': Sparkles,
