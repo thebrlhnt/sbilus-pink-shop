@@ -6,7 +6,13 @@ import { Product } from "@/types/product";
 export const fetchProducts = async (): Promise<Product[]> => {
   const { data: products, error } = await supabase
     .from('products')
-    .select('*');
+    .select(`
+      *,
+      categories (
+        id,
+        name
+      )
+    `);
 
   if (error) {
     console.error('Error fetching products:', error);
@@ -19,7 +25,13 @@ export const fetchProducts = async (): Promise<Product[]> => {
 export const fetchProductById = async (id: string): Promise<Product | null> => {
   const { data: product, error } = await supabase
     .from('products')
-    .select('*')
+    .select(`
+      *,
+      categories (
+        id,
+        name
+      )
+    `)
     .eq('id', id)
     .maybeSingle();
 
@@ -34,7 +46,8 @@ export const fetchProductById = async (id: string): Promise<Product | null> => {
 export const fetchCategories = async (): Promise<SupabaseCategory[]> => {
   const { data: categories, error } = await supabase
     .from('categories')
-    .select('*');
+    .select('*')
+    .order('name');
 
   if (error) {
     console.error('Error fetching categories:', error);
@@ -59,7 +72,13 @@ export const fetchProductsByCategory = async (categoryName: string): Promise<Pro
 
   const { data: products, error } = await supabase
     .from('products')
-    .select('*')
+    .select(`
+      *,
+      categories (
+        id,
+        name
+      )
+    `)
     .eq('category_id', category.id);
 
   if (error) {
@@ -93,7 +112,7 @@ export const updateProductStock = async (
   return data;
 };
 
-const transformSupabaseProduct = (supabaseProduct: SupabaseProduct): Product => {
+const transformSupabaseProduct = (supabaseProduct: any): Product => {
   // Handle stock data from the database
   let sizesObj: Product['sizes'] = {};
   
@@ -112,6 +131,9 @@ const transformSupabaseProduct = (supabaseProduct: SupabaseProduct): Product => 
     sizesObj.GG = 0;
   }
 
+  // Get category name from the joined data
+  const categoryName = supabaseProduct.categories?.name || "tshirts";
+
   return {
     id: supabaseProduct.id,
     name: supabaseProduct.name,
@@ -119,7 +141,7 @@ const transformSupabaseProduct = (supabaseProduct: SupabaseProduct): Product => 
     price: supabaseProduct.price,
     originalPrice: supabaseProduct.promotional_price ? supabaseProduct.price : undefined,
     image: supabaseProduct.images?.[0] || "https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=400&h=400&fit=crop",
-    category: "tshirts", // Default category, you might want to map this properly
+    category: categoryName,
     sizes: sizesObj,
     featured: false,
     isPromotion: !!supabaseProduct.promotional_price,
